@@ -1,33 +1,68 @@
 # accuval
 ## AccuVal REST API
 
-[AccuVal](https://accuval.co.uk/) is an AI based valuation platform for properties in the United Kingdom. It can be accessed interactively with any modern web browser, or programmatically using a REST API tool. This repo explains how AccuVal can be accessed via API with examples.
+[AccuVal](https://accuval.co.uk/) is an AI based valuation platform for properties in the United Kingdom. It can be accessed interactively with any modern web browser, or programmatically using a REST API tool. Currently, AccuVal provides estimates for the property value, rent and liquidity score.
+This repo explains how AccuVal can be accessed via API with examples.
 
 ## Method 1: UPRN Code
-UPRN stands for _Unique Property Reference Number_. It’s becoming the de-facto to reference properties across the different government bodies. As the name suggests, UPRN is unique for each property. As of mid 2022, please keep in mind that not all properties have UPRN assigned in all databases.
+UPRN stands for _Unique Property Reference Number_. It’s becoming the de-facto to reference properties in the UK. As the name suggests, UPRN is unique for each property. However, please keep in mind that not all properties have UPRN assigned in all databases.
 
-To value a property using it’s UPRN code, the following command can be used:
+To value a property using it’s UPRN code, the following example can be used from the command-line:
 
-`curl -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/?uprn=202215263"`
+`curl -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/price/1.0/?uprn=202215263"`
 
 Which would return:
 
-`{"Type": "Flat/Maisonette", "NUMBER_HABITABLE_ROOMS": 4, "TOTAL_FLOOR_AREA": 72, "CURRENT_ENERGY_RATING": "B", "POTENTIAL_ENERGY_RATING": "B", "CONSTRUCTION_AGE_BAND": "2012 Onwards", "Duration": "Leasehold", "New": "No", "Condition": "Average", "Price": 553430, "Confidence": "High confidence", "POSTCODE": "HA9 0FR", "ADDRESS": "Flat 1 Archery Court, 31, Olympic Way", "Rent": 2075}`
+`{"Type": "Flat/Maisonette", "NUMBER_HABITABLE_ROOMS": 4, "TOTAL_FLOOR_AREA": 72, "CURRENT_ENERGY_RATING": "B", "POTENTIAL_ENERGY_RATING": "B", "CONSTRUCTION_AGE_BAND": "2012 Onwards", "Duration": "Leasehold", "New": "No", "Condition": "Average", "Price": 553430, "Confidence": "High confidence", "POSTCODE": "HA9 0FR", "ADDRESS": "Flat 1 Archery Court, 31, Olympic Way"}`
 
 in JSON format. Obviously, the UPRN is required.
 
-Please [contact us](https://accuval.co.uk/contact/) for pricing and API keys.
+### Rental Value
+To get the rental value estimate for the property, the following example can be used:
 
-## Method 2: Property Details
-If UPRN is unavailable or unknown, AccuVal can still value properties based on their postcodes and basic information. This method is also useful to value properties that have changed or do not exist (yet)!
+`curl -v -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/rent/1.0/?uprn=202215263"`
 
-To value a property using it’ details, the following command can be used:
+### Liquidity Score
+To get the liquidity score for the property, the following example can be used:
 
-`curl -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/?postcode=HA9+0FR&address=Flat+1+Archery+Court,+31,+Olympic+Way&type=Flat/Maisonette&rooms=4&area=72&uom=m&epc_current=B&epc_potential=B&age=2012+Onwards&duration=Leasehold&new=No&condition=Average"`
+`curl -v -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/liquidity/1.0/?uprn=202215263&price=553430"`
 
 Which would return:
 
-`{"Type": "Flat/Maisonette", "NUMBER_HABITABLE_ROOMS": 4, "TOTAL_FLOOR_AREA": 72, "CURRENT_ENERGY_RATING": "B", "POTENTIAL_ENERGY_RATING": "B", "CONSTRUCTION_AGE_BAND": "2012 Onwards", "Duration": "Leasehold", "New": "No", "Condition": "Average", "Price": 553430, "Confidence": "High confidence", "POSTCODE": "HA9 0FR", "ADDRESS": "Flat 1 Archery Court, 31, Olympic Way", "Rent": 2075}`
+`{"POSTCODE": "HA9 0FR", "Type": "Flat", "TOTAL_FLOOR_AREA": 72, "LIQUIDITY": 0.5601287159056084}`
+
+Please [contact us](https://accuval.co.uk/contact/) for pricing and API keys.
+
+
+## Method 2: Custum
+If UPRN is unavailable or unknown, AccuVal can still value properties based on their postcodes and basic information. This method is also useful to value properties that have changed or do not exist (yet)!
+
+To value a property using it’ details, the following example can be used:
+
+`curl -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/price/1.0/?postcode=HA9+0FR&address=Flat+1+Archery+Court,+31,+Olympic+Way&type=Flat/Maisonette&rooms=4&area=72&uom=m&epc_current=B&epc_potential=B&age=2012+Onwards&duration=Leasehold&new=No&condition=Average"`
+
+Which would return:
+
+`{"Type": "Flat/Maisonette", "NUMBER_HABITABLE_ROOMS": 4, "TOTAL_FLOOR_AREA": 72, "CURRENT_ENERGY_RATING": "B", "POTENTIAL_ENERGY_RATING": "B", "CONSTRUCTION_AGE_BAND": "2012 Onwards", "Duration": "Leasehold", "New": "No", "Condition": "Average", "Price": 553430, "Confidence": "High confidence", "POSTCODE": "HA9 0FR", "ADDRESS": "Flat 1 Archery Court, 31, Olympic Way"}`
+
+### Rental Value
+To get the rental value estimate for the property, the following example can be used:
+
+`curl -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/rent/1.0/?postcode=HA9+0FR&address=Flat+1+Archery+Court,+31,+Olympic+Way&type=Flat/Maisonette&rooms=4&area=72&uom=m&epc_current=B&epc_potential=B&age=2012+Onwards&duration=Leasehold&new=No&condition=Average"`
+
+Which would return:
+
+`{"Type": "Flat/Maisonette", "NUMBER_HABITABLE_ROOMS": 4, "TOTAL_FLOOR_AREA": 72, "CURRENT_ENERGY_RATING": "B", "POTENTIAL_ENERGY_RATING": "B", "CONSTRUCTION_AGE_BAND": "2012 Onwards", "Duration": "Leasehold", "New": "No", "Condition": "Average", "Confidence": "High confidence", "POSTCODE": "HA9 0FR", "ADDRESS": "Flat 1 Archery Court, 31, Olympic Way", "Rent": 2075}`
+
+### Liquidity Score
+To get the liquidity score for the property, the following example can be used:
+
+`curl -v -H "apikey: replace-with-your-key" "https://accuval.co.uk/api/valuation/liquidity/1.0/?postcode=HA9+0FR&type=Flat/Maisonette&area=728&price=553430"`
+
+Which would return:
+
+`{"POSTCODE": "HA9 0FR", "Type": "Flat", "TOTAL_FLOOR_AREA": 728, "LIQUIDITY": 0.5601287159056084}`
+
 
 ### Required parameters
 
@@ -109,3 +144,6 @@ The overall condition of the property in relations to similar properties in the 
 - `Average` (_default_)
 - `Below Average`
 - `Poor`
+
+#### `price - Liquidity Score only`
+The Liquidity Score requires the price to be provided in the request.
